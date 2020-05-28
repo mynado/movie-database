@@ -87,10 +87,28 @@ const store = async (req, res) => {
  * PUT /:movieId
  */
 const update = async (req, res) => {
-	res.status(405).send({
-		status: 'fail',
-		message: 'Method not implemented',
-	});
+	try {
+		const movie = await models.Movie.findByIdAndUpdate(req.params.movieId, req.body, { new: true });
+
+		if (!movie) {
+			res.sendStatus(404);
+			return;
+		}
+
+		res.status(200).send({
+			status: 'success',
+			data: {
+				movie,
+			},
+		});
+
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: error.message,
+		});
+		throw error;
+	}
 }
 
 /**
