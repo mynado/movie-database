@@ -10,7 +10,6 @@ const models = require('../models');
  */
 const index = async (req, res) => {
 	try {
-		//const movie = await new models.Movie(req.body).save();
 		const movies = await models.Movie.find();
 
 		res.status(200).send({
@@ -34,10 +33,28 @@ const index = async (req, res) => {
  * GET /:movieId
  */
 const show = async (req, res) => {
-	res.status(405).send({
-		status: 'fail',
-		message: 'Method not implemented',
-	});
+	try {
+		const movie = await models.Movie.findById(req.params.movieId);
+
+		if (!movie) {
+			res.sendStatus(404);
+			return;
+		}
+
+		res.status(200).send({
+			status: 'success',
+			data: {
+				movie,
+			},
+		});
+
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: error.message,
+		});
+		throw error;
+	}
 }
 
 /**
@@ -59,14 +76,10 @@ const store = async (req, res) => {
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown when trying to create new movie.'
+			message: error.message,
 		});
 		throw error;
 	}
-	res.status(405).send({
-		status: 'fail',
-		message: 'Method not implemented',
-	});
 }
 
 /**
