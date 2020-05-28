@@ -5,7 +5,6 @@
 const mongoose = require('mongoose');
 
 // Connect to database
-// FAnXsyu1ltIclVXv
 mongoose.connect(process.env.DB_CONNECTION, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
@@ -20,7 +19,29 @@ db.once('open', function() {
 
 // Set up the models we want to use in our app
 
+// Movie Schema
+const MovieSchema = new mongoose.Schema({
+	title: {
+		type: String,
+		required: true,
+		trim: true,
+	},
+	runtime: {
+		type: Number,
+		default: null,
+	},
+	releaseDate: {
+		type: Date,
+		default: Date.now(),
+	},
+	certification: String,
+});
+
+// Movie Model
+const Movie = mongoose.model('Movie', MovieSchema); // den kommer att skapa collection: "movies" automatiskt baserat på vårt modelnamn aka pluralversionen.
+
 // Export all the things
 module.exports = {
+	Movie,
 	mongoose,
 }
