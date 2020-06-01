@@ -2,6 +2,7 @@
  * Models
  */
 
+const debug = require('debug')('08-movie-database:index')
 const mongoose = require('mongoose');
 
 // Connect to database
@@ -14,13 +15,14 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   // we're connected!
-  console.log('We are connected to MongoDB Atlas')
+  debug('We are connected to MongoDB Atlas')
 });
 
 // Set up the models we want to use in our app
 const models = {}
 models.Genre = require('./genre');
 models.Movie = require('./movie');
+models.Person = require('./person');
 
 // Export all the things
 module.exports = {

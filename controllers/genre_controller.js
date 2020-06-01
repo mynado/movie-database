@@ -2,6 +2,7 @@
  * Genre Controller
  */
 
+const debug = require('debug')('08-movie-database:genre_controller')
 const models = require('../models');
 
 /**

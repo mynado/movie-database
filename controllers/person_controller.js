@@ -1,43 +1,43 @@
 /**
- * Movie Controller
+ * Person Controller
  */
 
-const debug = require('debug')('08-movie-database:movie_controller')
+const debug = require('debug')('08-movie-database:person_controller')
 const models = require('../models');
 
 /**
- * Get all movies
+ * Get all person
  * GET /
  */
 const index = async (req, res) => {
 	try {
-		const movies = await models.Movie.find();
+		const persons = await models.Person.find();
 
 		res.status(200).send({
 			status: 'success',
 			data: {
-				movies,
+				persons,
 			},
 		});
 
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown when trying to get all movies.'
+			message: 'Exception thrown when trying to get all persons.'
 		});
 		throw error;
 	}
 }
 
 /**
- * Get a specific movie
- * GET /:movieId
+ * Get a specific person
+ * GET /:personId
  */
 const show = async (req, res) => {
 	try {
-		const movie = await models.Movie.findById(req.params.movieId).populate('genres');
+		const person = await models.Person.findById(req.params.personId);
 
-		if (!movie) {
+		if (!person) {
 			res.sendStatus(404);
 			return;
 		}
@@ -45,7 +45,7 @@ const show = async (req, res) => {
 		res.status(200).send({
 			status: 'success',
 			data: {
-				movie,
+				person,
 			},
 		});
 
@@ -59,19 +59,18 @@ const show = async (req, res) => {
 }
 
 /**
- * Create a new movie
+ * Create a new person
  * POST /
  */
 const store = async (req, res) => {
-	console.log('incoming new movie data', req.body);
+	console.log('incoming new person data', req.body);
 	try {
-		const movie = await new models.Movie(req.body).save();
-		debug('new movie created');
+		const person = await new models.Person(req.body).save();
 
 		res.status(201).send({
 			status: 'success',
 			data: {
-				movie,
+				person,
 			},
 		});
 
@@ -85,14 +84,14 @@ const store = async (req, res) => {
 }
 
 /**
- * Update a movie
- * PUT /:movieId
+ * Update a person
+ * PUT /:personId
  */
 const update = async (req, res) => {
 	try {
-		const movie = await models.Movie.findByIdAndUpdate(req.params.movieId, req.body, { new: true });
+		const person = await models.Person.findByIdAndUpdate(req.params.personId, req.body, { new: true });
 
-		if (!movie) {
+		if (!person) {
 			res.sendStatus(404);
 			return;
 		}
@@ -100,7 +99,7 @@ const update = async (req, res) => {
 		res.status(200).send({
 			status: 'success',
 			data: {
-				movie,
+				person,
 			},
 		});
 
@@ -114,14 +113,14 @@ const update = async (req, res) => {
 }
 
 /**
- * Delete a movie
- * DELETE /:movieId
+ * Delete a person
+ * DELETE /:personId
  */
 const destroy = async (req, res) => {
 	try {
-		const movie = await models.Movie.findByIdAndRemove(req.params.movieId);
+		const person = await models.Person.findByIdAndRemove(req.params.personId);
 
-		if (!movie) {
+		if (!person) {
 			res.sendStatus(404);
 			return;
 		}
@@ -129,7 +128,7 @@ const destroy = async (req, res) => {
 		res.status(200).send({
 			status: 'success',
 			data: {
-				movie,
+				person,
 			},
 		});
 
