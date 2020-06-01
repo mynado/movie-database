@@ -3,9 +3,10 @@
  */
 
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 // Declare Schema
-const MovieSchema = new mongoose.Schema({
+const MovieSchema = new Schema({
 	title: {
 		type: String,
 		required: true,
@@ -50,6 +51,12 @@ const MovieSchema = new mongoose.Schema({
 		default: null,
 	},
 	certification: String,
+	genres: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'Genre',
+		}
+	],
 });
 
 // Declare Model

@@ -1,42 +1,42 @@
 /**
- * Movie Controller
+ * Genre Controller
  */
 
 const models = require('../models');
 
 /**
- * Get all movies
+ * Get all genre
  * GET /
  */
 const index = async (req, res) => {
 	try {
-		const movies = await models.Movie.find();
+		const genres = await models.Genre.find();
 
 		res.status(200).send({
 			status: 'success',
 			data: {
-				movies,
+				genres,
 			},
 		});
 
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown when trying to get all movies.'
+			message: 'Exception thrown when trying to get all genres.'
 		});
 		throw error;
 	}
 }
 
 /**
- * Get a specific movie
- * GET /:movieId
+ * Get a specific genre
+ * GET /:genreId
  */
 const show = async (req, res) => {
 	try {
-		const movie = await models.Movie.findById(req.params.movieId).populate('genres');
+		const genre = await models.Genre.findById(req.params.genreId);
 
-		if (!movie) {
+		if (!genre) {
 			res.sendStatus(404);
 			return;
 		}
@@ -44,7 +44,7 @@ const show = async (req, res) => {
 		res.status(200).send({
 			status: 'success',
 			data: {
-				movie,
+				genre,
 			},
 		});
 
@@ -58,18 +58,18 @@ const show = async (req, res) => {
 }
 
 /**
- * Create a new movie
+ * Create a new genre
  * POST /
  */
 const store = async (req, res) => {
-	console.log('incoming new movie data', req.body);
+	console.log('incoming new genre data', req.body);
 	try {
-		const movie = await new models.Movie(req.body).save();
+		const genre = await new models.Genre(req.body).save();
 
 		res.status(201).send({
 			status: 'success',
 			data: {
-				movie,
+				genre,
 			},
 		});
 
@@ -83,14 +83,14 @@ const store = async (req, res) => {
 }
 
 /**
- * Update a movie
- * PUT /:movieId
+ * Update a genre
+ * PUT /:genreId
  */
 const update = async (req, res) => {
 	try {
-		const movie = await models.Movie.findByIdAndUpdate(req.params.movieId, req.body, { new: true });
+		const genre = await models.Genre.findByIdAndUpdate(req.params.genreId, req.body, { new: true });
 
-		if (!movie) {
+		if (!genre) {
 			res.sendStatus(404);
 			return;
 		}
@@ -98,7 +98,7 @@ const update = async (req, res) => {
 		res.status(200).send({
 			status: 'success',
 			data: {
-				movie,
+				genre,
 			},
 		});
 
@@ -112,14 +112,14 @@ const update = async (req, res) => {
 }
 
 /**
- * Delete a movie
- * DELETE /:movieId
+ * Delete a genre
+ * DELETE /:genreId
  */
 const destroy = async (req, res) => {
 	try {
-		const movie = await models.Movie.findByIdAndRemove(req.params.movieId);
+		const genre = await models.Genre.findByIdAndRemove(req.params.genreId);
 
-		if (!movie) {
+		if (!genre) {
 			res.sendStatus(404);
 			return;
 		}
@@ -127,7 +127,7 @@ const destroy = async (req, res) => {
 		res.status(200).send({
 			status: 'success',
 			data: {
-				movie,
+				genre,
 			},
 		});
 
