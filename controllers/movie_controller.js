@@ -69,6 +69,7 @@ const store = async (req, res) => {
 	console.log('incoming new movie data', req.body);
 	try {
 		const movie = await new models.Movie(req.body).save();
+
 		debug('new movie created');
 
 		res.status(201).send({

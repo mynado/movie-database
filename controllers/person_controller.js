@@ -34,6 +34,7 @@ const index = async (req, res) => {
  * GET /:personId
  */
 const show = async (req, res) => {
+
 	try {
 		const person = await models.Person.findById(req.params.personId);
 
@@ -42,10 +43,22 @@ const show = async (req, res) => {
 			return;
 		}
 
+		// get movies where person is director
+		const directorFor = await models.Movie.find({ director: req.params.personId }, 'title');
+
+		// get movies where person is actor
+		const actingIn = await models.Movie.find({ actors: req.params.personId }, 'title');
+
 		res.status(200).send({
 			status: 'success',
 			data: {
 				person,
+				director: {
+					movies: directorFor,
+				},
+				actor: {
+					movies: actingIn,
+				},
 			},
 		});
 
