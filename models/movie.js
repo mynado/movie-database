@@ -61,6 +61,7 @@ const MovieSchema = new Schema({
 		{
 			type: Schema.Types.ObjectId,
 			ref: 'Person',
+			default: null,
 		}
 	],
 	director: {

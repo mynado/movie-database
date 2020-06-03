@@ -33,6 +33,11 @@ const PersonSchema = new Schema({
 			maxlength: 2,
 		},
 	},
+	biography: {
+		type: String,
+		default: null,
+		trim: true,
+	},
 
 });
 
