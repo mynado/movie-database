@@ -145,6 +145,80 @@ const destroy = async (req, res) => {
 		throw error;
 	}
 }
+/**
+ * Add actors to a movie
+ *
+ * POST /:movieId/actors
+ * {
+ * 		"people": ["5ed4d1be4b49383cfa41f646"],
+ * }
+ */
+const addActors = async (req, res) => {
+	try {
+		const people = req.body.people;
+		const data = {
+			$push: {
+				actors: people,
+			}
+		}
+		const movie = await models.Movie.findByIdAndUpdate(req.params.movieId, data, { new: true });
+
+		if (!movie) {
+			res.sendStatus(404);
+			return;
+		}
+
+		res.status(200).send({
+			status: 'success',
+			data: {
+				movie,
+			},
+		});
+
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: error.message,
+		});
+		throw error;
+	}
+}
+
+/**
+ * Remove an actor from a movie
+ *
+ * DELETE /:movieId/actors/:personId
+ */
+const removeActor = async (req, res) => {
+	try {
+		const personId = req.params.personId;
+		const data = {
+			$pull: {
+				actors: personId,
+			}
+		}
+		const movie = await models.Movie.findByIdAndUpdate(req.params.movieId, data, { new: true });
+
+		if (!movie) {
+			res.sendStatus(404);
+			return;
+		}
+
+		res.status(200).send({
+			status: 'success',
+			data: {
+				movie,
+			},
+		});
+
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: error.message,
+		});
+		throw error;
+	}
+}
 
 module.exports = {
 	index,
@@ -152,4 +226,6 @@ module.exports = {
 	store,
 	update,
 	destroy,
+	addActors,
+	removeActor,
 }
