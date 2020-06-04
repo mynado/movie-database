@@ -35,8 +35,8 @@ const search = async (req, res) => {
 
 	try {
 		const movie = await models.Movie.find({
-			slug: {
-				$regex: new RegExp(req.query.q)
+			title: {
+				$regex: new RegExp(req.query.q, 'i')
 			}
 		})
 			.populate('actors', 'name')
