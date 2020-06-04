@@ -32,16 +32,19 @@ const index = async (req, res) => {
  *
  */
 const search = async (req, res) => {
-
 	try {
+		const query = req.query.q;
+		const regExQuery = new RegExp(query, 'i')
+
+		// search for query in movie
 		const movie = await models.Movie.find({
-			title: {
-				$regex: new RegExp(req.query.q, 'i')
-			}
+			$or: [
+				{ title: regExQuery },
+				{ plot: regExQuery },
+				{ original_title: regExQuery },
+				{ plot_keywords: regExQuery },
+			]
 		})
-			.populate('actors', 'name')
-			.populate('director', 'name')
-			.populate('genres');
 
 		if (!movie) {
 			res.sendStatus(404);
