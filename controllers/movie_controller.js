@@ -12,8 +12,7 @@ const models = require('../models');
 const index = async (req, res) => {
 	try {
 		const movies = await models.Movie.find();
-
-		res.status(200).send({
+		return res.status(200).send({
 			status: 'success',
 			data: {
 				movies,
@@ -21,11 +20,46 @@ const index = async (req, res) => {
 		});
 
 	} catch (error) {
-		res.status(500).send({
+		return res.status(500).send({
 			status: 'error',
 			message: 'Exception thrown when trying to get all movies.'
 		});
-		throw error;
+	}
+}
+
+/**
+ * Search for movies
+ *
+ */
+const search = async (req, res) => {
+
+	try {
+		const movie = await models.Movie.find({
+			slug: {
+				$regex: new RegExp(req.query.q)
+			}
+		})
+			.populate('actors', 'name')
+			.populate('director', 'name')
+			.populate('genres');
+
+		if (!movie) {
+			res.sendStatus(404);
+			return;
+		}
+
+		return res.status(200).send({
+			status: 'success',
+			data: {
+				movie,
+			},
+		});
+
+	} catch (error) {
+		return res.status(500).send({
+			status: 'error',
+			message: error.message,
+		});
 	}
 }
 
@@ -35,7 +69,6 @@ const index = async (req, res) => {
  */
 const show = async (req, res) => {
 	try {
-		// const movie = await models.Movie.findOne({ slug: req.params.movie })
 		const movie = await models.Movie.findOne(getMovieFilter(req.params.movie))
 			.populate('actors', 'name')
 			.populate('director', 'name')
@@ -46,7 +79,7 @@ const show = async (req, res) => {
 			return;
 		}
 
-		res.status(200).send({
+		return res.status(200).send({
 			status: 'success',
 			data: {
 				movie,
@@ -54,11 +87,10 @@ const show = async (req, res) => {
 		});
 
 	} catch (error) {
-		res.status(500).send({
+		return res.status(500).send({
 			status: 'error',
 			message: error.message,
 		});
-		throw error;
 	}
 }
 
@@ -73,7 +105,7 @@ const store = async (req, res) => {
 
 		debug('new movie created');
 
-		res.status(201).send({
+		return res.status(201).send({
 			status: 'success',
 			data: {
 				movie,
@@ -81,11 +113,10 @@ const store = async (req, res) => {
 		});
 
 	} catch (error) {
-		res.status(500).send({
+		return res.status(500).send({
 			status: 'error',
 			message: error.message,
 		});
-		throw error;
 	}
 }
 
@@ -102,7 +133,7 @@ const update = async (req, res) => {
 			return;
 		}
 
-		res.status(200).send({
+		return res.status(200).send({
 			status: 'success',
 			data: {
 				movie,
@@ -110,11 +141,10 @@ const update = async (req, res) => {
 		});
 
 	} catch (error) {
-		res.status(500).send({
+		return res.status(500).send({
 			status: 'error',
 			message: error.message,
 		});
-		throw error;
 	}
 }
 
@@ -131,7 +161,7 @@ const destroy = async (req, res) => {
 			return;
 		}
 
-		res.status(200).send({
+		return res.status(200).send({
 			status: 'success',
 			data: {
 				movie,
@@ -139,11 +169,10 @@ const destroy = async (req, res) => {
 		});
 
 	} catch (error) {
-		res.status(500).send({
+		return res.status(500).send({
 			status: 'error',
 			message: error.message,
 		});
-		throw error;
 	}
 }
 /**
@@ -169,7 +198,7 @@ const addActors = async (req, res) => {
 			return;
 		}
 
-		res.status(200).send({
+		return res.status(200).send({
 			status: 'success',
 			data: {
 				movie,
@@ -177,11 +206,10 @@ const addActors = async (req, res) => {
 		});
 
 	} catch (error) {
-		res.status(500).send({
+		return res.status(500).send({
 			status: 'error',
 			message: error.message,
 		});
-		throw error;
 	}
 }
 
@@ -205,7 +233,7 @@ const removeActor = async (req, res) => {
 			return;
 		}
 
-		res.status(200).send({
+		return res.status(200).send({
 			status: 'success',
 			data: {
 				movie,
@@ -213,26 +241,31 @@ const removeActor = async (req, res) => {
 		});
 
 	} catch (error) {
-		res.status(500).send({
+		return res.status(500).send({
 			status: 'error',
 			message: error.message,
 		});
-		throw error;
 	}
 }
 
+/**
+ * Get movie filter
+ *
+ * if `movie` is a hexadecimal string of exactly 24 charachters,
+ * then search the `_id` field
+ * otherwise, assume `movie` contains a slug and search the
+ * `slug` attribute
+ */
 const getMovieFilter = movie => {
-	return {
-		$or: [
-				{ slug: req.params.movie },
-				{ _id: req.params.movie },
-			]
-		}
+	return (/^[0-9a-fA-F]{24}$/.test(movie))
+		? { _id: movie }
+		: { slug: movie };
 }
 
 
 module.exports = {
 	index,
+	search,
 	show,
 	store,
 	update,
